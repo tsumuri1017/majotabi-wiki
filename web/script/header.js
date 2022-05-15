@@ -11,7 +11,7 @@ header.innerHTML = `
           </li>
           <li class="link">
             <a href="/about/">
-              <span>に関しては</span>
+              <span>魔女の旅々Wikiついて</span>
             </a>
           </li>
           <li class="link">
