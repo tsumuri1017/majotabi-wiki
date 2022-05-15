@@ -1,0 +1,43 @@
+h1{
+  
+}
+a{
+  color:blue;
+}
+body{
+  background-color:#85c0ff;
+}
+#article{
+  font-size:20px;
+  color:black;
+}
+#lastedit{
+  font-size:15px;
+  color:#ffffff;
+}
+
+#editid{
+  font-size:5px;
+  color:#ffffff;
+}
+
+textarea {
+  resize: none;
+  width:900px;
+  height:500px;
+}
+#prevention{
+  color:gray;
+}
+
+form {display:inline;}
+
+#search{
+  display:inline;
+}
+
+input{
+  width:300px; 
+  height:20px;
+  font-size:17px;
+}
