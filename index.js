@@ -22,7 +22,6 @@ app.listen(3000, () => {
 });
 /****************/
 
-
 /*app set*/
 app.get('/', (req, res) => { res.sendFile(__dirname + '/web/index.html'); });
 app.get('/about/', (req, res) => { res.sendFile(__dirname + '/web/about.html'); });
@@ -32,7 +31,8 @@ app.get('/style.css', (req, res) => { res.sendFile(__dirname + '/web/style/main.
 app.get('/header.css', (req, res) => { res.sendFile(__dirname + '/web/style/header.css'); });
 
 app.get('/editfile/', (req, res) => {
-  const AdminAccountNames = ["admin","Admin","ADMIN","tsumuri","Tsumuri","tsumuri1017","Tsumuri1017","Licyansytes","majotabiwiki","魔女旅ウィキ","管理者","管理人","運営","公式","システム","アドミン","アドミニストレータ","Administrator"];
+  const asdata = fs.readFileSync(__dirname + '/assets/admin-names', 'utf8');
+  const AdminAccountNames = asdata.split("\n");
   let time = GetDate();
   let userhandle = MakeHandle(req.headers['x-forwarded-for'], req.headers['user-agent']);
   let username = req.query.user;
@@ -60,6 +60,8 @@ app.use(function(req, res, next) {
     let DB_keyWord = path.substr(6, 256);
     DB_keyWord = (decodeURI(DB_keyWord))
     DB_keyWord = DB_keyWord.replace('/', '')
+    DB_keyWord = DB_keyWord.replace('<', '&lt;')
+    DB_keyWord = DB_keyWord.replace('>', '&gt;')
     if (fs.existsSync(__dirname + '/data/' + DB_keyWord + '.json')) {
       let data = (fs.readFileSync(__dirname + '/data/' + DB_keyWord + '.json', 'utf8'));
       data=String(data);
@@ -71,6 +73,7 @@ app.use(function(req, res, next) {
               editor_webdata=`<div id="editid">(ID:${data.lastedit_handle})</div>`
       }
 let articlebody = data.article;
+articlebody=RenderingHTML(articlebody)
 let articleSNSpreview = data.article;
   let counter_s = 0;
   while (counter_s < articlebody.length) {
@@ -177,13 +180,9 @@ let articleSNSpreview = data.article;
 
 
 function posting(articlename, user, handle, content, time) {
-  let counter_s = 0;
-  while (counter_s < content.length) {
-    content = content.replace('<script','<div class="prevention">(不正なJavaScriptが削除されました)<s>');
-    content = content.replace('</script>', '</s></div>');
-    content = content.replace(/\r?\n/g, '{br}');
-    counter_s++;
-  }
+articlename=XSS_Escape(articlename);
+user=XSS_Escape(user);
+content=XSS_Escape(content);
   let data = {name:articlename,article:content,lastedit:time,lastedit_user:user,lastedit_handle:handle}
   data = JSON.stringify(data)
   data=data+'\n'
@@ -231,4 +230,44 @@ function MakeMD5(arg) {
   const crypto = require('crypto');
   const hashHex = crypto.createHash('md5').update(arg, 'utf8').digest('hex');
   return hashHex;
+}
+
+function XSS_Escape(input){
+
+  let text = input;
+for (let i = 0; i < text.length; i++) {
+    text = text.replace('<h1>', '{h1}');
+    text = text.replace('</h1>', '{/h1}');
+    text = text.replace('<h2>', '{h2}');
+    text = text.replace('</h2>', '{/h2}');
+    text = text.replace('<h3>', '{h3}');
+    text = text.replace('</h3>', '{/h3}');
+    text = text.replace('<h4>', '{h4}');
+    text = text.replace('</h4>', '{/h4}');
+    text = text.replace('<', '&lt;');
+    text = text.replace('>', '&gt;');
+    text = text.replace("'", '&#39;');
+    text = text.replace('"', '&quot;');
+    text = text.replace("javascript:", 'js実行防止:');
+    text = text.replace(/\r?\n/g, '{br}');
+  }
+  return (text);
+}
+
+function RenderingHTML(input){
+  let text = input;
+for (let i = 0; i < text.length; i++) {
+    text = text.replace('{h1}', '<h2>');
+    text = text.replace('{/h1}', '</h2>');
+    text = text.replace('{h2}', '<h3>');
+    text = text.replace('{/h2}', '</h3>');
+    text = text.replace('{h3}', '<h4>');
+    text = text.replace('{/h3}', '</h4>');
+    text = text.replace('{h4}', '<h5>');
+    text = text.replace('{/h4}', '</h5>');
+    text = text.replace('{link}', '<a href="');
+    text = text.replace('@txt=', '">');
+    text = text.replace('{/link}', '</a>');
+  }
+  return (text);
 }
