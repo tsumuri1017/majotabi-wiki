@@ -54,7 +54,6 @@ app.use(function(req, res, next) {
   if (path.substr(1, 4) == "edit") { mode = 'edit'; }
   if (mode == 'api') {
     api(path.substr(5, 256));
-
   } else if (mode == 'web') {
     const fs = require('fs');
     let DB_keyWord = path.substr(6, 256);
@@ -62,6 +61,9 @@ app.use(function(req, res, next) {
     DB_keyWord = DB_keyWord.replace('/', '')
     DB_keyWord = DB_keyWord.replace('<', '&lt;')
     DB_keyWord = DB_keyWord.replace('>', '&gt;')
+    if(DB_keyWord==''){
+      res.sendFile(__dirname+'/web/redirect.html');
+    }else{
     if (fs.existsSync(__dirname + '/data/' + DB_keyWord + '.json')) {
       let data = (fs.readFileSync(__dirname + '/data/' + DB_keyWord + '.json', 'utf8'));
       data=String(data);
@@ -128,6 +130,7 @@ let articleSNSpreview = data.article;
 </body>
 </html>`
  )
+    }
     }
   } else if (mode == 'edit') {
     let old_article = "";
