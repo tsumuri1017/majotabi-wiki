@@ -28,8 +28,10 @@ app.get('/about/', (req, res) => { res.sendFile(__dirname + '/web/about.html'); 
 app.get('/terms', (req, res) => { res.sendFile(__dirname + '/web/terms.html'); });
 app.get('/header.js', (req, res) => { res.sendFile(__dirname + '/web/script/header.js'); });
 app.get('/style.css', (req, res) => { res.sendFile(__dirname + '/web/style/main.css'); });
+app.get('/frame.css', (req, res) => { res.sendFile(__dirname + '/web/style/frame.css'); });
 app.get('/header.css', (req, res) => { res.sendFile(__dirname + '/web/style/header.css'); });
-
+app.get('/tos', (req, res) => { res.sendFile(__dirname + '/web/terms/tos.html'); });
+app.get('/copyrights', (req, res) => { res.sendFile(__dirname + '/web/terms/copyrights.html'); });
 app.get('/editfile/', (req, res) => {
   const asdata = fs.readFileSync(__dirname + '/assets/admin-names', 'utf8');
   const AdminAccountNames = asdata.split("\n");
