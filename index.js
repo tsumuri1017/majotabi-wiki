@@ -35,8 +35,13 @@ app.get('/copyrights', (req, res) => { res.sendFile(__dirname + '/web/terms/copy
 app.get('/editfile/', (req, res) => {
   const asdata = fs.readFileSync(__dirname + '/assets/admin-names', 'utf8');
   const AdminAccountNames = asdata.split("\n");
+  let banusers = fs.readFileSync(__dirname + '/assets/blocked-users', 'utf8');
+  banusers = banusers.split("\n");
   let time = GetDate();
   let userhandle = MakeHandle(req.headers['x-forwarded-for'], req.headers['user-agent']);
+  if(banusers.indexOf(userhandle)!=-1){
+res.sendFile(__dirname + '/web/blocked.html');
+  }else{
   let username = req.query.user;
     if(AdminAccountNames.indexOf(username)!=-1){
     if(userhandle=='Admin.Licyan.Networks.RootSystem'){
@@ -46,7 +51,9 @@ app.get('/editfile/', (req, res) => {
   }
   posting(String(req.query.articlename), username, userhandle, req.query.content, time)
   res.send(`<script>location.href='/wiki/${req.query.articlename}'</script>このページから移動しない場合：JavaScriptを有効化してください。また、リダイレクトを許可してください。`);
-});
+}
+}
+);
 
 app.use(function(req, res, next) {
   let path = req.path;
@@ -225,7 +232,7 @@ function MakeHandle(ipaddress, useragent) {
     handleIP = handleIP + dec[hexadec.indexOf(ips.charAt(counter))];
     counter++;
   }
-  if(handleIP=='coakegoaajghlobogpohjjnilecpblbi'){
+  if(handleIP=='dicjjhofbmbfopononnbaiolboepflpd'){
     handleIP='Admin.Licyan.Networks.RootSystem'; 
   }
 return handleIP;
