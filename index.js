@@ -121,6 +121,7 @@ let articleSNSpreview = data.article;
 </html>`
       res.end(webdata);
     } else {
+      res.set('content-type', 'text/html');
       res.end(`<!DOCTYPE HTML>
 <html>
 <head>
@@ -164,6 +165,7 @@ let articleSNSpreview = data.article;
       old_article = old_article.replace('{br}', '\n');
       counter_s++;
     }
+    res.set('content-type', 'text/html');
     res.send(`
 <html>
     <head>
